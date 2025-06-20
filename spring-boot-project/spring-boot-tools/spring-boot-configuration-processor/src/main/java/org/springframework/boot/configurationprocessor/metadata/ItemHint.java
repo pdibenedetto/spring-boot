@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2024 the original author or authors.
+ * Copyright 2012-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,16 @@ public class ItemHint implements Comparable<ItemHint> {
 
 	public List<ValueProvider> getProviders() {
 		return Collections.unmodifiableList(this.providers);
+	}
+
+	/**
+	 * Return an {@link ItemHint} with the given prefix applied.
+	 * @param prefix the prefix to apply
+	 * @return a new {@link ItemHint} with the same of this instance whose property name
+	 * has the prefix applied to it
+	 */
+	public ItemHint applyPrefix(String prefix) {
+		return new ItemHint(ConventionUtils.toDashedCase(prefix) + "." + this.name, this.values, this.providers);
 	}
 
 	@Override

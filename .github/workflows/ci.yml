@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - 'main'
 jobs:
   ci:
     name: '${{ matrix.os.name}} | Java ${{ matrix.java.version}}'
@@ -18,16 +18,16 @@ jobs:
             name: Windows
         java:
           - version: 17
-            toolchain: false
-          - version: 21
-            toolchain: false
-          - version: 24
             toolchain: true
+          - version: 21
+            toolchain: true
+          - version: 24
+            toolchain: false
         exclude:
           - os:
               name: Linux
             java:
-              version: 17
+              version: 24
           - os:
               name: ${{ github.repository == 'spring-projects/spring-boot-commercial' && 'Windows' }}
     steps:

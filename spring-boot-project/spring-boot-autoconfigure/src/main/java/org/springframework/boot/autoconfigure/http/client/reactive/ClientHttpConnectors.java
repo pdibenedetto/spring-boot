@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.client.AbstractHttpClientProperties.Ssl;
 import org.springframework.boot.autoconfigure.http.client.reactive.AbstractClientHttpConnectorProperties.Connector;
 import org.springframework.boot.http.client.HttpRedirects;
@@ -36,25 +36,26 @@ import org.springframework.util.StringUtils;
  * {@link ClientHttpConnectorSettings}.
  *
  * @author Phillip Webb
+ * @since 4.0.0
  */
-class ClientHttpConnectors {
+public final class ClientHttpConnectors {
 
-	private final ObjectProvider<SslBundles> sslBundles;
+	private final ObjectFactory<SslBundles> sslBundles;
 
 	private final AbstractClientHttpConnectorProperties[] orderedProperties;
 
-	ClientHttpConnectors(ObjectProvider<SslBundles> sslBundles,
+	public ClientHttpConnectors(ObjectFactory<SslBundles> sslBundles,
 			AbstractClientHttpConnectorProperties... orderedProperties) {
 		this.sslBundles = sslBundles;
 		this.orderedProperties = orderedProperties;
 	}
 
-	ClientHttpConnectorBuilder<?> builder(ClassLoader classLoader) {
+	public ClientHttpConnectorBuilder<?> builder(ClassLoader classLoader) {
 		Connector connector = getProperty(AbstractClientHttpConnectorProperties::getConnector);
 		return (connector != null) ? connector.builder() : ClientHttpConnectorBuilder.detect(classLoader);
 	}
 
-	ClientHttpConnectorSettings settings() {
+	public ClientHttpConnectorSettings settings() {
 		HttpRedirects redirects = getProperty(AbstractClientHttpConnectorProperties::getRedirects);
 		Duration connectTimeout = getProperty(AbstractClientHttpConnectorProperties::getConnectTimeout);
 		Duration readTimeout = getProperty(AbstractClientHttpConnectorProperties::getReadTimeout);
@@ -72,10 +73,12 @@ class ClientHttpConnectors {
 	private <P, T> T getProperty(Function<AbstractClientHttpConnectorProperties, P> accessor, Function<P, T> extractor,
 			Predicate<T> predicate) {
 		for (AbstractClientHttpConnectorProperties properties : this.orderedProperties) {
-			P value = accessor.apply(properties);
-			T extracted = (value != null) ? extractor.apply(value) : null;
-			if (predicate.test(extracted)) {
-				return extracted;
+			if (properties != null) {
+				P value = accessor.apply(properties);
+				T extracted = (value != null) ? extractor.apply(value) : null;
+				if (predicate.test(extracted)) {
+					return extracted;
+				}
 			}
 		}
 		return null;

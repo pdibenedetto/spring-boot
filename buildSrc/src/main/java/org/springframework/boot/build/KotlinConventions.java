@@ -17,8 +17,6 @@
 package org.springframework.boot.build;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import dev.adamko.dokkatoo.DokkatooExtension;
 import dev.adamko.dokkatoo.formats.DokkatooHtmlPlugin;
@@ -28,7 +26,9 @@ import io.gitlab.arturbosch.detekt.extensions.DetektExtension;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions;
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions;
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion;
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 
 /**
@@ -52,9 +52,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
  */
 class KotlinConventions {
 
-	private static final String JVM_TARGET = "17";
+	private static final JvmTarget JVM_TARGET = JvmTarget.JVM_17;
 
-	private static final String KOTLIN_VERSION = "1.7";
+	private static final KotlinVersion KOTLIN_VERSION = KotlinVersion.KOTLIN_2_1;
 
 	void apply(Project project) {
 		project.getPlugins().withId("org.jetbrains.kotlin.jvm", (plugin) -> {
@@ -65,14 +65,12 @@ class KotlinConventions {
 	}
 
 	private void configure(KotlinCompile compile) {
-		KotlinJvmOptions kotlinOptions = compile.getKotlinOptions();
-		kotlinOptions.setApiVersion(KOTLIN_VERSION);
-		kotlinOptions.setLanguageVersion(KOTLIN_VERSION);
-		kotlinOptions.setJvmTarget(JVM_TARGET);
-		kotlinOptions.setAllWarningsAsErrors(true);
-		List<String> freeCompilerArgs = new ArrayList<>(kotlinOptions.getFreeCompilerArgs());
-		freeCompilerArgs.add("-Xsuppress-version-warnings");
-		kotlinOptions.setFreeCompilerArgs(freeCompilerArgs);
+		KotlinJvmCompilerOptions compilerOptions = compile.getCompilerOptions();
+		compilerOptions.getApiVersion().set(KOTLIN_VERSION);
+		compilerOptions.getLanguageVersion().set(KOTLIN_VERSION);
+		compilerOptions.getJvmTarget().set(JVM_TARGET);
+		compilerOptions.getAllWarningsAsErrors().set(true);
+		compilerOptions.getFreeCompilerArgs().addAll("-Xsuppress-version-warnings");
 	}
 
 	private void configureDokkatoo(Project project) {
@@ -104,7 +102,7 @@ class KotlinConventions {
 		project.getPlugins().apply(DetektPlugin.class);
 		DetektExtension detekt = project.getExtensions().getByType(DetektExtension.class);
 		detekt.getConfig().setFrom(project.getRootProject().file("src/detekt/config.yml"));
-		project.getTasks().withType(Detekt.class).configureEach((task) -> task.setJvmTarget(JVM_TARGET));
+		project.getTasks().withType(Detekt.class).configureEach((task) -> task.setJvmTarget(JVM_TARGET.getTarget()));
 	}
 
 }

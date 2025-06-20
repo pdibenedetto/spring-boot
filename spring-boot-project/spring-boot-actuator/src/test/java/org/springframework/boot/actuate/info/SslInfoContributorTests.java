@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2024 the original author or authors.
+ * Copyright 2012-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package org.springframework.boot.actuate.info;
-
-import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +40,7 @@ class SslInfoContributorTests {
 	@Test
 	void sslInfoShouldBeAdded() {
 		SslBundles sslBundles = new DefaultSslBundleRegistry("test", mock(SslBundle.class));
-		SslInfo sslInfo = new SslInfo(sslBundles, Duration.ofDays(14));
+		SslInfo sslInfo = new SslInfo(sslBundles);
 		SslInfoContributor sslInfoContributor = new SslInfoContributor(sslInfo);
 		Info.Builder builder = new Info.Builder();
 		sslInfoContributor.contribute(builder);
@@ -56,8 +54,7 @@ class SslInfoContributorTests {
 		new SslInfoContributorRuntimeHints().registerHints(runtimeHints, getClass().getClassLoader());
 		assertThat(RuntimeHintsPredicates.reflection()
 			.onType(SslInfo.class)
-			.withMemberCategories(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS))
-			.accepts(runtimeHints);
+			.withMemberCategories(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)).accepts(runtimeHints);
 	}
 
 }

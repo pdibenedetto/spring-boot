@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2024 the original author or authors.
+ * Copyright 2012-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@
 
 package org.springframework.boot.configurationprocessor;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.RecordComponentElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+
+import org.springframework.boot.configurationprocessor.metadata.ItemDeprecation;
 
 /**
  * A {@link PropertyDescriptor} for a record parameter.
@@ -44,8 +42,8 @@ class RecordParameterPropertyDescriptor extends ParameterPropertyDescriptor {
 	}
 
 	@Override
-	protected List<Element> getDeprecatableElements() {
-		return Arrays.asList(getGetter());
+	protected ItemDeprecation resolveItemDeprecation(MetadataGenerationEnvironment environment) {
+		return resolveItemDeprecation(environment, getGetter());
 	}
 
 	@Override

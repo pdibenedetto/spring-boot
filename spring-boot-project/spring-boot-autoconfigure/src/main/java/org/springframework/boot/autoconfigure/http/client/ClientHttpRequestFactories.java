@@ -21,12 +21,11 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.client.AbstractHttpClientProperties.Ssl;
 import org.springframework.boot.autoconfigure.http.client.AbstractHttpRequestFactoryProperties.Factory;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings.Redirects;
 import org.springframework.boot.http.client.HttpRedirects;
 import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
@@ -37,25 +36,26 @@ import org.springframework.util.StringUtils;
  * {@link ClientHttpRequestFactorySettings}.
  *
  * @author Phillip Webb
+ * @since 4.0.0
  */
-class ClientHttpRequestFactories {
+public final class ClientHttpRequestFactories {
 
-	private final ObjectProvider<SslBundles> sslBundles;
+	private final ObjectFactory<SslBundles> sslBundles;
 
 	private final AbstractHttpRequestFactoryProperties[] orderedProperties;
 
-	ClientHttpRequestFactories(ObjectProvider<SslBundles> sslBundles,
+	public ClientHttpRequestFactories(ObjectFactory<SslBundles> sslBundles,
 			AbstractHttpRequestFactoryProperties... orderedProperties) {
 		this.sslBundles = sslBundles;
 		this.orderedProperties = orderedProperties;
 	}
 
-	ClientHttpRequestFactoryBuilder<?> builder(ClassLoader classLoader) {
+	public ClientHttpRequestFactoryBuilder<?> builder(ClassLoader classLoader) {
 		Factory factory = getProperty(AbstractHttpRequestFactoryProperties::getFactory);
 		return (factory != null) ? factory.builder() : ClientHttpRequestFactoryBuilder.detect(classLoader);
 	}
 
-	ClientHttpRequestFactorySettings settings() {
+	public ClientHttpRequestFactorySettings settings() {
 		HttpRedirects redirects = getProperty(AbstractHttpRequestFactoryProperties::getRedirects);
 		Duration connectTimeout = getProperty(AbstractHttpRequestFactoryProperties::getConnectTimeout);
 		Duration readTimeout = getProperty(AbstractHttpRequestFactoryProperties::getReadTimeout);
@@ -63,7 +63,7 @@ class ClientHttpRequestFactories {
 				StringUtils::hasLength);
 		SslBundle sslBundle = (StringUtils.hasLength(sslBundleName))
 				? this.sslBundles.getObject().getBundle(sslBundleName) : null;
-		return new ClientHttpRequestFactorySettings(Redirects.of(redirects), connectTimeout, readTimeout, sslBundle);
+		return new ClientHttpRequestFactorySettings(redirects, connectTimeout, readTimeout, sslBundle);
 	}
 
 	private <T> T getProperty(Function<AbstractHttpRequestFactoryProperties, T> accessor) {
@@ -73,10 +73,12 @@ class ClientHttpRequestFactories {
 	private <P, T> T getProperty(Function<AbstractHttpRequestFactoryProperties, P> accessor, Function<P, T> extractor,
 			Predicate<T> predicate) {
 		for (AbstractHttpRequestFactoryProperties properties : this.orderedProperties) {
-			P value = accessor.apply(properties);
-			T extracted = (value != null) ? extractor.apply(value) : null;
-			if (predicate.test(extracted)) {
-				return extracted;
+			if (properties != null) {
+				P value = accessor.apply(properties);
+				T extracted = (value != null) ? extractor.apply(value) : null;
+				if (predicate.test(extracted)) {
+					return extracted;
+				}
 			}
 		}
 		return null;

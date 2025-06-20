@@ -73,7 +73,6 @@ org.springframework.boot.actuate.autoconfigure.metrics.export.signalfx.SignalFxM
 org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.metrics.export.stackdriver.StackdriverMetricsExportAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.metrics.export.statsd.StatsdMetricsExportAutoConfiguration
-org.springframework.boot.actuate.autoconfigure.metrics.export.wavefront.WavefrontMetricsExportAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.metrics.integration.IntegrationMetricsAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.metrics.jdbc.DataSourcePoolMetricsAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.metrics.jersey.JerseyServerMetricsAutoConfiguration
@@ -88,6 +87,8 @@ org.springframework.boot.actuate.autoconfigure.metrics.web.tomcat.TomcatMetricsA
 org.springframework.boot.actuate.autoconfigure.neo4j.Neo4jHealthContributorAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.observation.batch.BatchObservationAutoConfiguration
+org.springframework.boot.actuate.autoconfigure.observation.batch.BatchObservationAutoConfiguration
+org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.observation.web.client.HttpClientObservationsAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.observation.web.reactive.WebFluxObservationAutoConfiguration
@@ -112,9 +113,7 @@ org.springframework.boot.actuate.autoconfigure.tracing.NoopTracerAutoConfigurati
 org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryTracingAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.tracing.otlp.OtlpTracingAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.tracing.prometheus.PrometheusExemplarsAutoConfiguration
-org.springframework.boot.actuate.autoconfigure.tracing.wavefront.WavefrontTracingAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration
-org.springframework.boot.actuate.autoconfigure.wavefront.WavefrontAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.web.exchanges.HttpExchangesAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.web.exchanges.HttpExchangesEndpointAutoConfiguration
 org.springframework.boot.actuate.autoconfigure.web.mappings.MappingsEndpointAutoConfiguration

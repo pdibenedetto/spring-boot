@@ -36,6 +36,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  * @since 3.0.0
  */
 @AutoConfiguration(after = JacksonAutoConfiguration.class)
+@SuppressWarnings("removal")
 public class JacksonEndpointAutoConfiguration {
 
 	@Bean

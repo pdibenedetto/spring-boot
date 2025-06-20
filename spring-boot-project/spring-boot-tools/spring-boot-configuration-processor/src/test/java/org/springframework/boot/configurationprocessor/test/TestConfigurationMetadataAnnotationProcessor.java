@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2024 the original author or authors.
+ * Copyright 2012-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnno
  * @author Scott Frederick
  */
 @SupportedAnnotationTypes({ TestConfigurationMetadataAnnotationProcessor.CONFIGURATION_PROPERTIES_ANNOTATION,
+		TestConfigurationMetadataAnnotationProcessor.CONFIGURATION_PROPERTIES_SOURCE_ANNOTATION,
 		TestConfigurationMetadataAnnotationProcessor.CONTROLLER_ENDPOINT_ANNOTATION,
 		TestConfigurationMetadataAnnotationProcessor.ENDPOINT_ANNOTATION,
 		TestConfigurationMetadataAnnotationProcessor.JMX_ENDPOINT_ANNOTATION,
@@ -47,6 +48,8 @@ import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnno
 public class TestConfigurationMetadataAnnotationProcessor extends ConfigurationMetadataAnnotationProcessor {
 
 	public static final String CONFIGURATION_PROPERTIES_ANNOTATION = "org.springframework.boot.configurationsample.ConfigurationProperties";
+
+	public static final String CONFIGURATION_PROPERTIES_SOURCE_ANNOTATION = "org.springframework.boot.configurationsample.ConfigurationPropertiesSource";
 
 	public static final String NESTED_CONFIGURATION_PROPERTY_ANNOTATION = "org.springframework.boot.configurationsample.NestedConfigurationProperty";
 
@@ -72,6 +75,8 @@ public class TestConfigurationMetadataAnnotationProcessor extends ConfigurationM
 
 	public static final String READ_OPERATION_ANNOTATION = "org.springframework.boot.configurationsample.ReadOperation";
 
+	public static final String OPTIONAL_PARAMETER_ANNOTATION = "org.springframework.boot.configurationsample.OptionalParameter";
+
 	public static final String NAME_ANNOTATION = "org.springframework.boot.configurationsample.Name";
 
 	public static final String ENDPOINT_ACCESS_ENUM = "org.springframework.boot.configurationsample.Access";
@@ -82,6 +87,11 @@ public class TestConfigurationMetadataAnnotationProcessor extends ConfigurationM
 	@Override
 	protected String configurationPropertiesAnnotation() {
 		return CONFIGURATION_PROPERTIES_ANNOTATION;
+	}
+
+	@Override
+	protected String configurationPropertiesSourceAnnotation() {
+		return CONFIGURATION_PROPERTIES_SOURCE_ANNOTATION;
 	}
 
 	@Override
@@ -118,6 +128,11 @@ public class TestConfigurationMetadataAnnotationProcessor extends ConfigurationM
 	@Override
 	protected String readOperationAnnotation() {
 		return READ_OPERATION_ANNOTATION;
+	}
+
+	@Override
+	protected String optionalParameterAnnotation() {
+		return OPTIONAL_PARAMETER_ANNOTATION;
 	}
 
 	@Override

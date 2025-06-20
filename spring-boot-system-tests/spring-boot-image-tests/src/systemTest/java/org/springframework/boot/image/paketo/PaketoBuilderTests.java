@@ -309,6 +309,9 @@ class PaketoBuilderTests {
 		this.gradleBuild
 			.expectDeprecationMessages("has been deprecated. This is scheduled to be removed in Gradle 9.0");
 		this.gradleBuild.expectDeprecationMessages("upgrading_version_8.html#deprecated_access_to_convention");
+		// these deprecations are from native image buildpacks
+		this.gradleBuild.expectDeprecationMessages("Using a deprecated option --report-unsupported-elements-at-runtime",
+				"The option is deprecated and will be removed in the future.");
 		writeMainClass();
 		String imageName = "paketo-integration/" + this.gradleBuild.getProjectDir().getName();
 		ImageReference imageReference = ImageReference.of(ImageName.of(imageName));
@@ -502,12 +505,12 @@ class PaketoBuilderTests {
 						"/layers/sbom/launch/paketo-buildpacks_" + buildpack + "/sbom.cdx.json");
 			layer.jsonEntry("/layers/sbom/launch/paketo-buildpacks_" + buildpack + "/sbom.syft.json",
 					(json) -> json.extractingJsonPathArrayValue("$.artifacts.[*].name")
-						.contains("spring-beans", "spring-boot", "spring-boot-autoconfigure", "spring-context",
-								"spring-core", "spring-expression", "spring-jcl", "spring-web", "spring-webmvc"));
+						.contains("commons-logging", "spring-beans", "spring-boot", "spring-boot-autoconfigure",
+								"spring-context", "spring-core", "spring-expression", "spring-web", "spring-webmvc"));
 			layer.jsonEntry("/layers/sbom/launch/paketo-buildpacks_" + buildpack + "/sbom.cdx.json",
 					(json) -> json.extractingJsonPathArrayValue("$.components.[*].name")
-						.contains("spring-beans", "spring-boot", "spring-boot-autoconfigure", "spring-context",
-								"spring-core", "spring-expression", "spring-jcl", "spring-web", "spring-webmvc"));
+						.contains("commons-logging", "spring-beans", "spring-boot", "spring-boot-autoconfigure",
+								"spring-context", "spring-core", "spring-expression", "spring-web", "spring-webmvc"));
 		});
 	}
 

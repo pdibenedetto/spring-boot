@@ -32,7 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings.Redirects;
+import org.springframework.boot.http.client.HttpRedirects;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -319,7 +319,7 @@ class RestTemplateBuilderTests {
 	void basicAuthenticationShouldApply() {
 		RestTemplate template = this.builder.basicAuthentication("spring", "boot", StandardCharsets.UTF_8).build();
 		ClientHttpRequest request = createRequest(template);
-		assertThat(request.getHeaders()).containsOnlyKeys(HttpHeaders.AUTHORIZATION);
+		assertThat(request.getHeaders().headerNames()).containsOnly(HttpHeaders.AUTHORIZATION);
 		assertThat(request.getHeaders().get(HttpHeaders.AUTHORIZATION)).containsExactly("Basic c3ByaW5nOmJvb3Q=");
 	}
 
@@ -327,7 +327,7 @@ class RestTemplateBuilderTests {
 	void defaultHeaderAddsHeader() {
 		RestTemplate template = this.builder.defaultHeader("spring", "boot").build();
 		ClientHttpRequest request = createRequest(template);
-		assertThat(request.getHeaders()).contains(entry("spring", Collections.singletonList("boot")));
+		assertThat(request.getHeaders().headerSet()).contains(entry("spring", Collections.singletonList("boot")));
 	}
 
 	@Test
@@ -336,7 +336,7 @@ class RestTemplateBuilderTests {
 		String[] values = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE };
 		RestTemplate template = this.builder.defaultHeader(name, values).build();
 		ClientHttpRequest request = createRequest(template);
-		assertThat(request.getHeaders()).contains(entry(name, Arrays.asList(values)));
+		assertThat(request.getHeaders().headerSet()).contains(entry(name, Arrays.asList(values)));
 	}
 
 	@Test // gh-17885
@@ -344,7 +344,7 @@ class RestTemplateBuilderTests {
 		RestTemplate template = this.builder.defaultHeader("spring", "boot").build();
 		MockRestServiceServer.bindTo(template).build();
 		ClientHttpRequest request = createRequest(template);
-		assertThat(request.getHeaders()).contains(entry("spring", Collections.singletonList("boot")));
+		assertThat(request.getHeaders().headerSet()).contains(entry("spring", Collections.singletonList("boot")));
 	}
 
 	@Test
@@ -361,7 +361,7 @@ class RestTemplateBuilderTests {
 			.requestCustomizers((request) -> request.getHeaders().add("spring", "framework"))
 			.build();
 		ClientHttpRequest request = createRequest(template);
-		assertThat(request.getHeaders()).contains(entry("spring", Collections.singletonList("framework")));
+		assertThat(request.getHeaders().headerSet()).contains(entry("spring", Collections.singletonList("framework")));
 	}
 
 	@Test
@@ -371,7 +371,7 @@ class RestTemplateBuilderTests {
 			.additionalRequestCustomizers((request) -> request.getHeaders().add("for", "java"))
 			.build();
 		ClientHttpRequest request = createRequest(template);
-		assertThat(request.getHeaders()).contains(entry("spring", Collections.singletonList("framework")))
+		assertThat(request.getHeaders().headerSet()).contains(entry("spring", Collections.singletonList("framework")))
 			.contains(entry("for", Collections.singletonList("java")));
 	}
 
@@ -490,9 +490,9 @@ class RestTemplateBuilderTests {
 
 	@Test
 	void configureRedirects() {
-		assertThat(this.builder.redirects(Redirects.DONT_FOLLOW)).extracting("requestFactorySettings")
+		assertThat(this.builder.redirects(HttpRedirects.DONT_FOLLOW)).extracting("requestFactorySettings")
 			.extracting("redirects")
-			.isSameAs(Redirects.DONT_FOLLOW);
+			.isSameAs(HttpRedirects.DONT_FOLLOW);
 	}
 
 	private ClientHttpRequest createRequest(RestTemplate template) {

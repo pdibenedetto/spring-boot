@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2022 the original author or authors.
+ * Copyright 2012-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import org.springframework.graphql.ExecutionGraphQlService;
 import org.springframework.graphql.test.tester.ExecutionGraphQlServiceTester;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
 
 /**
  * Auto-configuration for {@link GraphQlTester}.
@@ -44,17 +42,20 @@ import org.springframework.http.codec.json.Jackson2JsonEncoder;
 @ConditionalOnClass({ GraphQL.class, GraphQlTester.class })
 public class GraphQlTesterAutoConfiguration {
 
+	private static final MediaType APPLICATION_GRAPHQL = new MediaType("application", "graphql+json");
+
 	@Bean
 	@ConditionalOnBean(ExecutionGraphQlService.class)
 	@ConditionalOnMissingBean
-	@SuppressWarnings("removal")
+	@SuppressWarnings({ "removal", "deprecation" })
 	public ExecutionGraphQlServiceTester graphQlTester(ExecutionGraphQlService graphQlService,
 			ObjectProvider<ObjectMapper> objectMapperProvider) {
 		ExecutionGraphQlServiceTester.Builder<?> builder = ExecutionGraphQlServiceTester.builder(graphQlService);
 		objectMapperProvider.ifAvailable((objectMapper) -> {
-			builder.encoder(new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_GRAPHQL_RESPONSE,
-					MediaType.APPLICATION_JSON, MediaType.APPLICATION_GRAPHQL));
-			builder.decoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
+			builder.encoder(new org.springframework.http.codec.json.Jackson2JsonEncoder(objectMapper,
+					MediaType.APPLICATION_GRAPHQL_RESPONSE, MediaType.APPLICATION_JSON, APPLICATION_GRAPHQL));
+			builder.decoder(new org.springframework.http.codec.json.Jackson2JsonDecoder(objectMapper,
+					MediaType.APPLICATION_JSON));
 		});
 		return builder.build();
 	}
